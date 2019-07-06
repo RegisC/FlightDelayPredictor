@@ -1,0 +1,21 @@
+<html>
+	<head>
+		<title>Prédiction d'heure d'arrivée de vols</title>
+	</head>
+	<body>
+    <h1>Paramètres du vol</h1>
+    <form action="{{ url_for('show_form') }}" method="post" novalidate>
+        {{ form.hidden_tag() }}
+		{% for field in form %} 
+			{%if ((field.widget.input_type != 'hidden') and
+				  (field.type != 'SubmitField'))%}
+				<p>{{ field.label }}<br>
+				{{ field }}
+				{% for error in field.errors %}
+					<span style="color: red;">[{{ error }}]</span>
+				{% endfor %}
+				</p>
+			{% endif %}
+		{% endfor %}
+		<p>{{ form.submit() }}</p> 	
+</html>
