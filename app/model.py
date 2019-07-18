@@ -7,13 +7,17 @@ import sklearn.linear_model
 class Model:	
 	def __init__(self, form):
 		print("Nouveau modèle instancié")
-		self.dep_date = form.dep_datetime.data.date()
-		self.dep_time = form.dep_datetime.data.time()
+		self.dep_date = form.dep_date.data
+		self.dep_time = form.dep_time.data
 		self.airline = form.airline.data	
 		d = form.flight_duration.data
 		self.flight_duration = 	d.minute + d.hour * 60
+		self.flight_departed = form.flight_departed.data
+		self.dep_delay = form.dep_delay.data
 		print(f"Départ le {self.dep_date} à {self.dep_time} sur {self.airline},"
-			  f"temps de vol {self.flight_duration} minutes.")
+			  f"temps de vol {self.flight_duration} minutes," 
+			  f"décollé : {self.flight_departed},"
+			  f"délai au décollage {self.dep_delay} minutes.")
 		self.load()
 	
 	def load(self):
@@ -48,9 +52,9 @@ class Model:
 		col = 'dep_' + str(self.dep_time.hour)
 		if col in df.columns:
 			df.loc[0, col] = 1 				
-		print(df.iloc[0,:])
+		# print(df.iloc[0,:])
 		X = df.values
-		print("Taille de X :", X.shape)
+		# print("Taille de X :", X.shape)
 		return X
 		
 	def get_empty_df(self):

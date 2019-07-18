@@ -14,15 +14,16 @@ def main():
 def show_form():
 	# Formulaire de description du vol
 	form = app.forms.FlightDetailsForm()
+	print(form.airline.choices)
 	if form.validate_on_submit():
-		print("Valeurs validées")
 		model = app.model.Model(form)
 		model.predict()
-		return flask.render_template('results.html', 
+		form.reset_choices() # Sans quoi les 2 listes se vident
+		return flask.render_template('predict.html', 
 									 title='Résultat', 
+									 form=form,
 									 model=model)
 	else:
-		print("Départ :", form.dep_datetime.data)
 		print("Erreur de validation")
 	return flask.render_template('predict.html', 
 								 title='Paramètres du vol',

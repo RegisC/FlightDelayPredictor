@@ -1,21 +1,40 @@
 <html>
 	<head>
+		<style type="text/css">
+			.fieldset-auto-width {
+				display: inline-block;
+			}
+</style>
 		<title>Prédiction d'heure d'arrivée de vols</title>
 	</head>
 	<body>
-    <h1>Paramètres du vol</h1>
+	<h1>Prédiction du retard de votre vol</h1>
+	À partir de quelques informations, nous pouvons estimer 
+	le retard que votre vol risque d'avoir à l'arrivée.	
+	<p>
+	Si l'avion a déjà décollé, indiquez nous son retard au décollage : notre
+	estimation du retard à l'arrivée sera alors beaucoup plus précise !
+	<p>
     <form action="{{ url_for('show_form') }}" method="post" novalidate>
+		<fieldset class="fieldset-auto-width">
+		<legend>Données du vol</legend>
         {{ form.hidden_tag() }}
 		{% for field in form %} 
 			{%if ((field.widget.input_type != 'hidden') and
 				  (field.type != 'SubmitField'))%}
-				<p>{{ field.label }}<br>
+				<p>{{ field.label }}
+				{%if (field.type != 'BooleanField')%} <br> {% endif %}
 				{{ field }}
 				{% for error in field.errors %}
 					<span style="color: red;">[{{ error }}]</span>
 				{% endfor %}
 				</p>
 			{% endif %}
-		{% endfor %}
+		{% endfor %}		
 		<p>{{ form.submit() }}</p> 	
+		</fieldset>
+	</form>
+    {% if model %}
+        Notre modèle prédit pour votre vol un retard de {{model.delay}} minutes.
+    {% endif %}	
 </html>

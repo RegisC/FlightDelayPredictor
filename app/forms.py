@@ -1,8 +1,10 @@
+import datetime
 import flask_wtf
 import wtforms as wtf
-#import wtforms.fields.html5
-from wtforms.fields.html5 import DateTimeLocalField, TimeField
-from wtforms.validators import DataRequired
+from wtforms.fields.html5 import DateField
+from wtforms.validators import DataRequired, Optional
+from wtforms import BooleanField, IntegerField
+from wtforms_components import TimeField
 
 class NoValSelectField(wtf.SelectField):
 	"""Cette classe désactive la validation, qui ne fonctionnait pas."""
@@ -47,12 +49,25 @@ class FlightDetailsForm(flask_wtf.FlaskForm):
 		'TXK', 'TYR', 'TYS', 'UST', 'VLD', 'VPS', 'WRG', 'WYS', 'XNA', 'YAK', 
 		'YUM'
 	]
-	airline = NoValSelectField('Compagnie aérienne', validators=[DataRequired()], 
+	hours = range(0, 24)
+	minutes = range(1, 60)
+	airline = NoValSelectField('Compagnie aérienne', 
 							   choices=zip(airlines, airlines))
 	dep_airport = NoValSelectField('Aéroport de départ', 
-								   validators=[DataRequired()],  
 								   choices=zip(airports, airports))
-	dep_datetime = DateTimeLocalField("Date et heure de départ du vol", 
-							 validators=[DataRequired()]), format='%Y-%m-%d %H:%M')	
-	flight_duration = TimeField('Durée annoncée du vol', validators=[DataRequired()])
+	dep_date = DateField("Date (locale) de départ du vol", 
+							 validators=[DataRequired()], format='%Y-%m-%d',
+							 default=datetime.datetime.today)	
+	dep_time = TimeField("Heure (locale) de départ du vol", 
+							 validators=[DataRequired()])								 
+	flight_duration = TimeField('Durée annoncée du vol', 
+								validators=[DataRequired()])
+	flight_departed = BooleanField('Avion déjà en vol')
+	dep_delay = IntegerField('Retard au décollage (minutes)',
+							 validators=[Optional(strip_whitespace=True)])
 	submit = wtf.SubmitField("Prédire l'heure d'arrivée")
+	
+	def reset_choices(self):
+		# Pourquoi ceci est-il nécessaire ?
+		self.airline.choices = zip(self.airlines, self.airlines)
+		self.dep_airport.choices = zip(self.airports, self.airports)
