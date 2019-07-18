@@ -1,6 +1,13 @@
 Initialisation de Heroku 
 ------------------------
 
+Exporter la liste des paquetages requis :
+pip freeze > requirements.txt
+
+Supprimer les entrées suivantes :
+mkl-fft
+mkl-random
+
 heroku login
 heroku git:remote -a rc-flight-delays
 git add .
@@ -22,10 +29,4 @@ ou
 ipython FlightDelayPredictor.py
 ou 
 waitress-serve --port=5000  app:instance
-
-Mise à jour des fichiers sur Heroku
------------------------------------
-
-Exporter la liste des paquetages requis :
-conda list --export > requirements.txt
 
