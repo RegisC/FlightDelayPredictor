@@ -7,6 +7,7 @@ pip freeze > requirements.txt
 Supprimer les entrées suivantes :
 mkl-fft
 mkl-random
+mkl-service
 
 heroku login
 heroku git:remote -a rc-flight-delays
