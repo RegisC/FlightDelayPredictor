@@ -1,8 +1,16 @@
 Initialisation de Heroku 
 ------------------------
 
+heroku login
 heroku git:remote -a rc-flight-delays
+git add .
+git commit -m "Message"
+git push heroku master
 
+Pour afficher les messages émis sur le serveur
+----------------------------------------------
+
+heroku logs -t
 
 Exécution locale
 ----------------
