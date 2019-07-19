@@ -7,6 +7,7 @@ import sklearn.linear_model
 class Model:	
 	def __init__(self, form):
 		print("Nouveau modèle instancié")
+		self.origin = form.dep_airport.data
 		self.dep_date = form.dep_date.data
 		self.dep_time = form.dep_time.data
 		self.airline = form.airline.data	
@@ -14,7 +15,8 @@ class Model:
 		self.flight_duration = 	d.minute + d.hour * 60
 		self.flight_departed = form.flight_departed.data
 		self.dep_delay = form.dep_delay.data
-		print(f"Départ le {self.dep_date} à {self.dep_time} sur {self.airline},"
+		print(f"Départ de {self.origin} le {self.dep_date} " 
+			  f"à {self.dep_time} sur {self.airline},"
 			  f"temps de vol {self.flight_duration} minutes," 
 			  f"décollé : {self.flight_departed},"
 			  f"délai au décollage {self.dep_delay} minutes.")
@@ -22,9 +24,12 @@ class Model:
 	
 	def load(self):
 		MODEL_FILE = 'regression_model.sav'
+		PERF_METRICS_FILE = 'perf-metrics.sav'
 		self.model = pickle.load(open(MODEL_FILE, 'rb'))
-		print("Coefficients du modèle de régression :")
-		print(self.model.coef_)
+		self.perf = pickle.load(open(PERF_METRICS_FILE, 'rb'))
+		#print("Coefficients du modèle de régression chargé :")
+		#print(self.model.coef_)
+		print(f"Taille des coefficients du modèle : {len(self.model.coef_)}")
 		
 	def predict(self):
 		delay = self.model.predict(self.get_input_vector())[0]
@@ -34,8 +39,8 @@ class Model:
 	def get_input_vector(self):
 		df = self.get_empty_df()
 		df.loc[0, 'CRS_ELAPSED_TIME'] = self.flight_duration
-		df.loc[0, 'CARRIER_DELAY'] = 3.45137
-		df.loc[0, 'ORIGIN_DELAY'] = 6.41685
+		df.loc[0, 'CARRIER_DELAY'] = self.perf['CARRIER'][self.airline]
+		df.loc[0, 'ORIGIN_DELAY'] = self.perf['ORIGIN'][self.origin]
 		# Compagnie 
 		col = 'car_' + self.airline
 		if col in df.columns:
@@ -54,7 +59,7 @@ class Model:
 			df.loc[0, col] = 1 				
 		# print(df.iloc[0,:])
 		X = df.values
-		# print("Taille de X :", X.shape)
+		print("Taille de X :", X.shape)
 		return X
 		
 	def get_empty_df(self):

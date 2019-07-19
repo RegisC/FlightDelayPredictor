@@ -15,10 +15,18 @@ git add .
 git commit -m "Message"
 git push heroku master
 
+
 Pour afficher les messages émis sur le serveur
 ----------------------------------------------
 
 heroku logs -t
+
+
+Adresse du serveur web
+----------------------
+
+https://rc-flight-delays.herokuapp.com/predict
+
 
 Exécution locale
 ----------------
