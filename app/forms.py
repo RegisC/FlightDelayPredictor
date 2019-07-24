@@ -49,12 +49,10 @@ class FlightDetailsForm(flask_wtf.FlaskForm):
 		'TXK', 'TYR', 'TYS', 'UST', 'VLD', 'VPS', 'WRG', 'WYS', 'XNA', 'YAK', 
 		'YUM'
 	]
-	hours = range(0, 24)
-	minutes = range(1, 60)
-	airline = NoValSelectField('Compagnie aérienne', 
-							   choices=zip(airlines, airlines))
-	dep_airport = NoValSelectField('Aéroport de départ', 
-								   choices=zip(airports, airports))
+	choices = list(zip(airlines, airlines))
+	airline = wtf.SelectField('Compagnie aérienne', choices=choices)
+	choices = list(zip(airports, airports))
+	dep_airport = wtf.SelectField('Aéroport de départ', choices=choices)
 	dep_date = DateField("Date (locale) de départ du vol", 
 							 validators=[DataRequired()], format='%Y-%m-%d',
 							 default=datetime.datetime.today)	
@@ -62,8 +60,8 @@ class FlightDetailsForm(flask_wtf.FlaskForm):
 							 validators=[DataRequired()])								 
 	flight_duration = TimeField('Durée annoncée du vol', 
 								validators=[DataRequired()])
-	flight_departed = BooleanField('Avion déjà en vol')
-	dep_delay = IntegerField('Retard au décollage (minutes)',
+	#flight_departed = BooleanField('Avion déjà en vol')
+	dep_delay = IntegerField('Retard au décollage, si connu (minutes)',
 							 validators=[Optional(strip_whitespace=True)])
 	submit = wtf.SubmitField("Prédire l'heure d'arrivée")
 	

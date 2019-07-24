@@ -13,26 +13,30 @@ class Model:
 		self.airline = form.airline.data	
 		d = form.flight_duration.data
 		self.flight_duration = 	d.minute + d.hour * 60
-		self.flight_departed = form.flight_departed.data
 		self.dep_delay = form.dep_delay.data
 		print(f"Départ de {self.origin} le {self.dep_date} " 
 			  f"à {self.dep_time} sur {self.airline},"
 			  f"temps de vol {self.flight_duration} minutes," 
-			  f"décollé : {self.flight_departed},"
 			  f"délai au décollage {self.dep_delay} minutes.")
 		self.load()
 	
 	def load(self):
-		MODEL_FILE = 'regression_model.sav'
-		PERF_METRICS_FILE = 'perf-metrics.sav'
-		self.model = pickle.load(open(MODEL_FILE, 'rb'))
+		PERF_METRICS_FILE = 'perf_metrics.sav'
 		self.perf = pickle.load(open(PERF_METRICS_FILE, 'rb'))
-		#print("Coefficients du modèle de régression chargé :")
-		#print(self.model.coef_)
-		print(f"Taille des coefficients du modèle : {len(self.model.coef_)}")
+		
+		if (self.dep_delay == None):
+			MODEL_FILE = 'pre_dep_model.sav'
+		else:
+			MODEL_FILE = 'post_dep_model.sav'
+		
+		load = pickle.load(open(MODEL_FILE, 'rb'))
+		self.model = load['Model']
+		self.EQM = round(load['Performance']['RMSE'], 1)
+		self.EAM = round(load['Performance']['MAE'], 1)
+		print(f"Fichier {MODEL_FILE} chargé.")
 		
 	def predict(self):
-		delay = self.model.predict(self.get_input_vector())[0]
+		delay = self.model.predict(self.get_input_vector())[0]		
 		print(f"Retard prédit : {delay:0.4f} minute(s).")
 		self.delay = int(delay)
 
@@ -57,6 +61,9 @@ class Model:
 		col = 'dep_' + str(self.dep_time.hour)
 		if col in df.columns:
 			df.loc[0, col] = 1 				
+		# Retard au départ
+		if not(self.dep_delay == None):
+			df.insert(0, 'DEP_DELAY', self.dep_delay)
 		# print(df.iloc[0,:])
 		X = df.values
 		print("Taille de X :", X.shape)

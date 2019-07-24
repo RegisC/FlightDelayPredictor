@@ -5,12 +5,12 @@ import app.model
 
 print('Chargement du module routes.py')
 
-@instance.route('/')
+@instance.route('/unused')
 def main():
 	# Page d'accueil définie dans main.html
 	return(flask.render_template('main.html')) 
 
-@instance.route('/predict', methods=['GET', 'POST'])
+@instance.route('/', methods=['GET', 'POST'])
 def show_form():
 	# Formulaire de description du vol
 	form = app.forms.FlightDetailsForm()
@@ -18,7 +18,6 @@ def show_form():
 	if form.validate_on_submit():
 		model = app.model.Model(form)
 		model.predict()
-		form.reset_choices() # Sans quoi les 2 listes se vident
 		return flask.render_template('predict.html', 
 									 title='Résultat', 
 									 form=form,

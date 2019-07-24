@@ -36,5 +36,8 @@
 	</form>
     {% if model %}
         <b>Notre modèle prédit pour votre vol un retard de {{model.delay}} minutes.</b>
+		<p>
+		Erreur quadratique moyenne : {{model.EQM}} minutes.
+		Erreur absolue moyenne : {{model.EAM}} minutes.
     {% endif %}	
 </html>
